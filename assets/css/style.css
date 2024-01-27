@@ -1,0 +1,34 @@
+body {
+  margin: 12px|0px; /* marge 12 px pour le haut-bas, nulle pour le haut-bas */
+  font-size: 14px;
+  background-color: #ffe4c4 /* couleur d'arrière-plan */ }
+  h1 { font-size: 1.5em /* police 50% plus grande que celle de l'élément parent (rem donne la même chose) */ }
+  h2 { font-size: 1.25em /* police 25% plus grande que celle de l'élément parent (rem donne la même chose) */ }
+#page { /* concerne l'id "page" */
+    min-height: 100%;
+    margin: 0 auto; /* centre la div horizontalement */
+    width: 80%; /* largeur de la bande centrale */
+    border: 2px solid #0000bc; /* bordure */
+    padding: 20px; /* ajout padding pour éviter de coller à la bordure */
+	width: 80%; /* 80% de la largeur de la bande centrale */
+	background-color: #deb887; /* couleur d'arrière-plan */
+	}
+.entete { /* concerne la classe "entete" */
+	text-align: center; /* texte centré */
+	}
+#aboutme { /* concerne l'id "aboutme" */
+	width: 60% ; /* largeur du cadre */
+	border: 2px solid #0000bc;
+	background-color: white ;
+	padding: 10px ; /* ajusté pour que le cadrage soit correct */
+	margin: 10px    /* idem */
+	} 
+#tableau1 {
+	tr, td { border: 2px double #0000bc; /* pour que les cellules soient entourées d'une bordure */}
+	}
+footer {
+  display: flex; /* pour remplir l'espace de manière optimisée */
+  justify-content: center;
+  background-color: #0000bc;
+  color: white;
+}	
