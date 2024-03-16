@@ -124,35 +124,39 @@ function compterSyllabes(vers, haspire = false, dierese = false) {
 	Principe du découpage en syllabe : le vers en entrée est transformé à coup d'expressions régulières
 	en vers0 pour lequel les suites de voyelles de regex_syl permettent de définir avec un minimum 
 	d'erreurs des syllabes.
-	Les principales transformations portent sur la suppression de la poncutation, les qu/gu devant voyelle, les e muets, les y voyelles
-	et les syllabes 'i'+voyelle pour lesquelles se pose la question de la diérère
+	Les principales transformations portent sur la suppression de la ponctuation, les qu/gu devant voyelle, les e muets, les y voyelles
+	et les syllabes 'i'+voyelle pour lesquelles se pose la question de la diérèse
 	*/
 	
-		const regex_syl = /(eau|eui|oue|oui|uiè|ïeu|ieu|iou|iai|iau|aon|ai|âi|aî|au|ea|eô|ei|eu|ée|ia|iâ|ie|ié|iè|iê|io|iô|iu|oi|oî|ou|oû|où|ui|uî|œu|a|e|i|o|u|é|è|à|ù|â|ê|î|ô|û|ë|ï|ö|ü|œ)/g;
-		
-		const regex_emuet0 = /(?<=[bcdfghjklmnpqrstvwxz])e(?= ?[\.\?,;:!])/g;
-		const regex_emuet1 = /(es|ent)$/;
-		if (haspire) {regex_emuet2 = /e(?=($| +[aeiouéèàâêîôûœ]))/g} else {regex_emuet2 = /e(?=($| +[aeiouéèàâêîôûœh]))/g};
-		const regex_ponct = /[\.\?,;:!’']/g;
-		const regex_qgu=/(?<=[qg])u(?=[ aeioéèàâêîô])/g;
-		const regex_y1 = /(?<=[bcdfghjklmnpqrstvwxz])y/g;
-		const regex_y2 = /y(?= ?( |$))/g;
-		const regex_iue = /(?<=[iu])e(?=s?($| ))/g;
-		const regex_dierese = /(i|u|ou)(?=[aeouéèàâêôû])/g;
-		const regex_plier = /(?<=[bcdfgptv][lr])(i|u|ou)(?=[aeouéèàâêôû])/g;
-		
-		let vers0 = vers.toLowerCase();
-		
-		//vers0 = vers0.replace(regex_emuet0, 'a'); // premier traitement des e muets : on les garde entre une consonne et un signe de ponctuation --> à voir s'il faut garder cela --> a priori non
-		vers0 = vers0.replace(regex_ponct, ' ').trim(); //on remplace les signes de ponctuation par un espace que l'on supprime en fin de vers
-		vers0 = vers0.replace(regex_qgu, ''); //on supprime les 'u' dans 'qu' et 'gu' devant voyelle ou espace
-		vers0 = vers0.replace(regex_emuet1, ''); // deuxième traitement des e muets : cas des 'es' ou 'ent' en fin de vers que l'on supprime (tans pis pour les adjectifs 'négligent' ou autres)
-		vers0 = vers0.replace(regex_emuet2, ''); // troisième traitement des e muets (e suivi d'un espace, puis d'une voyelle ou e en fin de vers) : on les supprime
-		vers0 = vers0.replace(regex_y1, 'i'); // on remplace les y derrière consonne par des i
-		vers0 = vers0.replace(regex_y2, 'i'); // on remplace les y en fin de mot par des i
-		vers0 = vers0.replace(regex_iue, ''); // on remplace les ie(s)/ue(s) en fin de mot ou de vers par i(s)/u(s)
-		if (dierese){vers0 = vers0.replace(regex_dierese, 'ih');} //on remplace les i/u/ou devant voyelle par 'ih' pour bien obtenir 2 syllabes
-		else {vers0 = vers0.replace(regex_plier, 'ih');}; // on remplace les i/u/ou devant voyelle et derrière certaines paires de consonnes par 'ih' pour bien obtenir 2 syllabes  (cas de 'plier' -> 'pliher')
+	const regex_syl = /(eau|eui|oue|oui|uiè|ïeu|ieu|iou|iai|iau|aon|ai|âi|aî|au|ea|eô|ei|eu|ée|ia|iâ|ie|ié|iè|iê|io|iô|iu|oi|oî|ou|oû|où|ui|uî|œu|a|e|i|o|u|é|è|à|ù|â|ê|î|ô|û|ë|ï|ö|ü|œ)/g;
+	
+	const regex_qgu=/(?<=[qg])u(?=[’'aeioéèàâêîô])/g;
+	const regex_emuet0 = /(?<=[bcdfghjklmnpqrstvwxz])e(?= ?[\.\?,;:!])/g;
+	const regex_emuet1 = /(es|[^m]ent)$/;
+	if (haspire) {regex_emuet2 = /e(?=($| +[aeiouéèàâêîôûœ]))/g} else {regex_emuet2 = /e(?=($| +[aeiouéèàâêîôûœh]))/g};
+	const regex_ponct = /[\.\?,;:!’']/g;
+	const regex_y1 = /(?<=[bcdfghjklmnpqrstvwxz])y/g;
+	const regex_y2 = /y(?= ?( |$))/g;
+	const regex_iue = /(?<=[iu])e(?=s?($| ))/g;
+	const regex_dierese = /(i|u|ou)(?=[aeouéèàâêôû])/g;
+	const regex_plier = /(?<=[bcdfgptv][lr])(i|u|ou)(?=[aeouéèàâêôû])/g;
+	
+	let vers0 = vers.toLowerCase();
+	
+	// les 2 instructions suivantes sont à faire avant la suppression de la ponctuation
+	vers0 = vers0.replace(regex_qgu, ''); //on supprime les 'u' dans 'qu' et 'gu' devant voyelle ou apostrophe
+	//vers0 = vers0.replace(regex_emuet0, 'a'); // premier traitement des e muets : on les garde entre une consonne et un signe de ponctuation --> à voir s'il faut garder cela --> a priori non
+	//
+	
+	vers0 = vers0.replace(regex_ponct, ' ').trim(); //on remplace les signes de ponctuation par un espace que l'on supprime en fin de vers
+	vers0 = vers0.replace(regex_emuet1, ''); /* deuxième traitement des e muets : cas des 'es' ou 'ent' en fin de vers que l'on supprime
+				sauf les mots en -ment(tant pis pour les adjectifs 'négligent' ou autres et pour les verbes 'aiment' ou autres)*/
+	vers0 = vers0.replace(regex_emuet2, ''); // troisième traitement des e muets (e suivi d'un espace, puis d'une voyelle ou e en fin de vers) : on les supprime
+	vers0 = vers0.replace(regex_y1, 'i'); // on remplace les y derrière consonne par des i
+	vers0 = vers0.replace(regex_y2, 'i'); // on remplace les y en fin de mot par des i
+	vers0 = vers0.replace(regex_iue, ''); // on remplace les ie(s)/ue(s) en fin de mot ou de vers par i(s)/u(s)
+	if (dierese){vers0 = vers0.replace(regex_dierese, 'ih');} //on remplace les i/u/ou devant voyelle par 'ih' pour bien obtenir 2 syllabes
+	else {vers0 = vers0.replace(regex_plier, 'ih');}; // on remplace les i/u/ou devant voyelle et derrière certaines paires de consonnes par 'ih' pour bien obtenir 2 syllabes  (cas de 'plier' -> 'pliher')
 
 	return vers0.match(regex_syl).length;
 }
