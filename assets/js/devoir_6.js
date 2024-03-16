@@ -130,11 +130,11 @@ function compterSyllabes(vers, haspire = false, dierese = false) {
 	
 		const regex_syl = /(eau|eui|oue|oui|uiè|ïeu|ieu|iou|iai|iau|aon|ai|âi|aî|au|ea|eô|ei|eu|ée|ia|iâ|ie|ié|iè|iê|io|iô|iu|oi|oî|ou|oû|où|ui|uî|œu|a|e|i|o|u|é|è|à|ù|â|ê|î|ô|û|ë|ï|ö|ü|œ)/g;
 		
-		const regex_qgu=/(?<=[qg])u(?=[aeioéèàâêîô])/g;
 		const regex_emuet0 = /(?<=[bcdfghjklmnpqrstvwxz])e(?= ?[\.\?,;:!])/g;
 		const regex_emuet1 = /(es|ent)$/;
 		if (haspire) {regex_emuet2 = /e(?=($| +[aeiouéèàâêîôûœ]))/g} else {regex_emuet2 = /e(?=($| +[aeiouéèàâêîôûœh]))/g};
 		const regex_ponct = /[\.\?,;:!’']/g;
+		const regex_qgu=/(?<=[qg])u(?=[ aeioéèàâêîô])/g;
 		const regex_y1 = /(?<=[bcdfghjklmnpqrstvwxz])y/g;
 		const regex_y2 = /y(?= ?( |$))/g;
 		const regex_iue = /(?<=[iu])e(?=s?($| ))/g;
@@ -143,9 +143,9 @@ function compterSyllabes(vers, haspire = false, dierese = false) {
 		
 		let vers0 = vers.toLowerCase();
 		
-		vers0 = vers0.replace(regex_qgu, ''); //on supprime les 'u' dans 'qu' et 'gu' devant voyelle
 		//vers0 = vers0.replace(regex_emuet0, 'a'); // premier traitement des e muets : on les garde entre une consonne et un signe de ponctuation --> à voir s'il faut garder cela --> a priori non
 		vers0 = vers0.replace(regex_ponct, ' ').trim(); //on remplace les signes de ponctuation par un espace que l'on supprime en fin de vers
+		vers0 = vers0.replace(regex_qgu, ''); //on supprime les 'u' dans 'qu' et 'gu' devant voyelle ou espace
 		vers0 = vers0.replace(regex_emuet1, ''); // deuxième traitement des e muets : cas des 'es' ou 'ent' en fin de vers que l'on supprime (tans pis pour les adjectifs 'négligent' ou autres)
 		vers0 = vers0.replace(regex_emuet2, ''); // troisième traitement des e muets (e suivi d'un espace, puis d'une voyelle ou e en fin de vers) : on les supprime
 		vers0 = vers0.replace(regex_y1, 'i'); // on remplace les y derrière consonne par des i
