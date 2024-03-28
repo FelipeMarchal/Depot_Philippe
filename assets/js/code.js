@@ -36,65 +36,80 @@ window.onload = function() {
 }
 function segmentation() {
 	
+	const nbsp = String.fromCharCode(160);
+	
 	const texte = document.getElementById(`fileDisplayArea`).innerText;
 	const delim = document.getElementById(`delimID`).value;
+	
+	if (texte.length > 0) {
 
 	// on remplace tous les caractères de fin de ligne ou tabulation (éventuellement à compléter) par des espaces
 	texte0 = texte.replace(RegExp("(\\n|\\r|\\t)","g"),' ');
 	
-	/* la suite tient compte de la casse; si on ne le veut pas, il suffit d'ajouter :
-	texte0 = texte0.toLowerCase();                                                  */
+	// on ajoute un espace derrière les apostrophes pour les garder dans le texte => "s'", "l'", etc. compteront pour 2 caractères, "qu'" pour 3, etc.
+	texte0 = texte0.replace(/['’]/g,"' ");  
+	
+	// en cas de besoin, on peut mettre en commentaires la ligne suivante
+	texte0 = texte0.toLowerCase();                                                  
 	
 	mots = multipleSplit(texte0, delim); // voir explications fonction ci-dessous
 	nMots = mots.length;
-
-    // on met les mots dans un objet, pour calculer la fréquence des mots
+	
+	// on met les mots dans un objet, pour calculer la fréquence des mots
 	freqMots = [];
-    mots.forEach (m => {
-        if (freqMots[m]) {
-            freqMots[m]++;
-        } else {
-            freqMots[m]=1;
-        }
-    });
+    mots.forEach (m => {if (freqMots[m]) {freqMots[m]++;} else {freqMots[m]=1;}});
 
-    // on met freqMots dans longMots pour y ajouter la longueur de chaque mot
-	let longMots = Object.entries(freqMots);
-	while (longMots[i] != undefined) {longMots[i][2]=longMots[i][0].length;i++;}
-
-	// on trie longMots en fonction de la longueur croissante, puis alphabétique
-    longMots.sort((a, b) => ((100+a[2]+a[0]) > (100+b[2]+b[0]) ? 1 : -1));
+	// on met les mots dans un objet longueur de mots, pour y mettre la fréaunce et tous les mots ayant cette longueur
+	longMots = [];
+	for (let i=0;i<50;i++){longMots.push([i, 0, ''])}; // a priori, il ne devrait pas y avoir des mots de plus de 50 caractères !
+	
+	for (m in freqMots) {
+		lg=m.length;
+		if (lg>0) {
+			fr=freqMots[m]
+			longMots[lg][1] += fr;
+			longMots[lg][2] +=  m;
+			if (fr>1) {longMots[lg][2] +=  '(' + fr + ')';}
+			longMots[lg][2]+=' '
+		}
+	};
 
 	analyse = `Le texte comprend ${nMots} mots.`;
 	
 	analyse += `\n\nListe des mots triés par longueur :`;
 	
+	analyse += '\n+' + '-'.repeat(59) + '+';
+	analyse += '\n|Longueur|Fréquence|' + nbsp.repeat(18) + 'Mots' + nbsp.repeat(18) + '|';
+	analyse += '\n|' + '-'.repeat(59) + '|';
+	
 	/* pour construire un tableau bien colonné, j'ai développé une fonction
 	ajoutant des espaces insécables (Ascii 160) à gauche (nombres) ou à droite (texte),
 	car les espaces simples ( Ascii 32) sont "tassés" dans html;
     j'ai également chois la police Courier New dans le fichiers css.
-	NB : je n'ai pas réussi à gérer un tableau HTML dans 'page-analysis' en javascript */
-	mot = ajoutEspace('Mot', 15, 'droite') ;
-	longueur = ajoutEspace('Longueur', 10, 'gauche') ;
-	frequence = ajoutEspace('Fréquence', 10, 'gauche') ;
-	
-	analyse += '\n' + '-'.repeat(42);
-	analyse += '\n| ' + mot + '|' + longueur + ' |' + frequence + ' |';
-	analyse += '\n|' + '-'.repeat(40) + '|';
-	i = 0;
-	while (longMots[i] != undefined) {
-		mot = ajoutEspace(longMots[i][0], 15, 'droite') ;
-		longueur = ajoutEspace(longMots[i][2], 10, 'gauche') ;
-		frequence = ajoutEspace(longMots[i][1], 10, 'gauche') ;
-		analyse += '\n| ' + mot + '|' + longueur + ' |' + frequence + ' |';
-		i++;
-	};
-	analyse += '\n' + '-'.repeat(42);
-
+	NB : je n'ai pas réussi à gérer un tableau HTML dans 'page-analysis' en javascript */	
+		
+	longMots.forEach ( lg => {
+ 		if (lg[1]>0) {
+			analyse += '\n|'+ ajoutCarac(lg[0], 7, 'gauche', nbsp) + nbsp + '|' + ajoutCarac(lg[1], 8, 'gauche', nbsp) + nbsp + '|' + nbsp;
+			tab_m=lg[2].split(' ');
+			m=''
+			for (i=0;i<tab_m.length;i++) {
+				if (m.length+tab_m[i].length > 37) {
+					analyse += ajoutCarac(m, 38, 'droite', nbsp) + nbsp + '|';
+					m = '';
+					analyse += '\n|'+ nbsp.repeat(8) + '|' + nbsp.repeat(9) + '|' + nbsp;
+				};
+				m+=tab_m[i]+','+nbsp
+			}
+			analyse+=ajoutCarac(m.slice(0,m.length-4), 38, 'droite', nbsp) + nbsp + '|';
+		};
+	});
+	analyse += '\n+' + '-'.repeat(59) + '+';
+		
 	let pageAnalysis = document.getElementById(`page-analysis`);
 	pageAnalysis.innerText = analyse
 
-}
+}}
 function multipleSplit(textString, separators) {
 /* je n'ai pas réussi à mettre au point un regex, à travers la fonction RegExp,
 permettant de faire un split sur plusieurs séparateurs, ceci à cause des caractères génériques;
@@ -102,8 +117,8 @@ j'ai donc développé une fonction sans regex                                   
 	
 	let text0 = textString;
 	
-	separators = ' ' + separators.replace(' ',''); // la boucle ci-dessous doit finir par le caractère espace
-	for (i=textString.length-1;i>0;i--) {text0=text0.split(separators[i]).join(separators[i-1]);};
+	separators = separators.replace(' ',''); // on terminera obligatoirement par le séparateur espace
+	for (i=0;i<separators.length;i++) {text0=text0.split(separators[i]).join(' ');};
 	
 	/* remplacement de toutes les séquences de plusieurs espaces par un seul espace,
 	suppression des espaces à gauche et à droite, puis split sur le caractère espace */
@@ -112,14 +127,13 @@ j'ai donc développé une fonction sans regex                                   
 	return words;
 
 }
-function ajoutEspace(texte, longueur, cote) {
+function ajoutCarac(texte, longueur, cote, carac) {
 	
-	nbsp = String.fromCharCode(160);
 	if (cote[0].toLowerCase() === 'g') {
-		texte0=nbsp.repeat(longueur)+texte;
+		texte0=carac.repeat(longueur)+texte;
 		texte0=texte0.slice(texte0.length-longueur);}
 	else {
-		texte0=texte+nbsp.repeat(longueur);
+		texte0=texte+carac.repeat(longueur);
 		texte0=texte0.slice(0, longueur);}
 
 	return texte0;
