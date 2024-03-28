@@ -76,10 +76,10 @@ html {
 #Global #page-analysis {
 	margin-left:52%;
 	background: #FFF;
+	font-family: "Courier New";
+	font-size:0.6em;
 	height:200px;
 	overflow:scroll;
-	font-family: "Courier New";
-	font-size: 11px;
 }
 
 h1 {
