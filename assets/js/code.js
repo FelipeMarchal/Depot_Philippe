@@ -55,22 +55,21 @@ function segmentation() {
 	mots = multipleSplit(texte0, delim); // voir explications fonction ci-dessous
 	nMots = mots.length;
 	
-	// on met les mots dans un objet, pour calculer la fréquence des mots
+	// on met les mots dans un objet, pour calculer la fréquence des mots en cas de besoin
 	freqMots = [];
     mots.forEach (m => {if (freqMots[m]) {freqMots[m]++;} else {freqMots[m]=1;}});
 
 	// on met les mots dans un objet longueur de mots, pour y mettre la fréaunce et tous les mots ayant cette longueur
 	longMots = [];
-	for (let i=0;i<50;i++){longMots.push([i, 0, ''])}; // a priori, il ne devrait pas y avoir des mots de plus de 50 caractères !
+	for (let i=0;i<50;i++){longMots.push([i, 0, '', 0])}; // a priori, il ne devrait pas y avoir des mots de plus de 50 caractères !
 	
 	for (m in freqMots) {
 		lg=m.length;
 		if (lg>0) {
 			fr=freqMots[m]
 			longMots[lg][1] += fr;
-			longMots[lg][2] +=  m;
-			if (fr>1) {longMots[lg][2] +=  '(' + fr + ')';}
-			longMots[lg][2]+=' '
+			longMots[lg][2] +=  m + ' ';
+			longMots[lg][3] ++;
 		}
 	};
 
@@ -94,14 +93,15 @@ function segmentation() {
 			tab_m=lg[2].split(' ');
 			m=''
 			for (i=0;i<tab_m.length;i++) {
-				if (m.length+tab_m[i].length > 37) {
+				if (m.length+tab_m[i].length > 32) {
 					analyse += ajoutCarac(m, 38, 'droite', nbsp) + nbsp + '|';
 					m = '';
 					analyse += '\n|'+ nbsp.repeat(8) + '|' + nbsp.repeat(9) + '|' + nbsp;
 				};
 				m+=tab_m[i]+','+nbsp
 			}
-			analyse+=ajoutCarac(m.slice(0,m.length-4), 38, 'droite', nbsp) + nbsp + '|';
+			m = m.slice(0,m.length-4) + ' (' + lg[3] + ')';
+			analyse+=ajoutCarac(m , 38, 'droite', nbsp) + nbsp + '|';
 		};
 	});
 	analyse += '\n+' + '-'.repeat(59) + '+';
