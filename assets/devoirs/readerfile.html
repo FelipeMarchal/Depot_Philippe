@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="http://www.tal.univ-paris3.fr/plurital/logo.ico">
+    <title>Lecture des données dans un fichier...</title>
+    <script type="text/javascript" language="javascript" src="../js/code.js"></script>
+    <link rel="stylesheet" href="../css/monstyle.css" />
+</head>
+
+<body>
+    <div id="page">
+        <div id="container">
+            <h1 style="text-align:center;">Analyse des <span style="color:green">données</span> dans un fichier</h1>
+
+            <div id="page-wrapper">
+                <div>
+                    <span>
+                        <label for="fileInput" class="btn"><small>Sélectionner un fichier au format .txt
+                                :</small></label>
+                        <input id="fileInput" type="file" accept="text/plain" name="Fichier (.txt)" />
+                    </span>
+                </div>
+                <br />
+                <p style="text-align:center;">
+                    <small>
+                        <label for="delimID" class="mylabel">Délimiteur(s)</label>
+                        &nbsp;
+                        <input type="text" value=" ,;~|&#@=`-.?!%*$()[]{}_:+«»§\/&lt&gt&quot&nbsp" name="delim" id="delimID" size="40" />
+                    </small>
+                    <br />
+                    <small>
+                        <label for="poleID" class="mylabel">Pôle</label>
+                        &nbsp;
+                        <input type="text" placeholder="entrez un pôle..." name="pole" id="poleID" size="20" />
+                    </small>
+                    &nbsp;
+                    <small>
+                        <label for="lgID" class="mylabel">Longueur</label>
+                        &nbsp;
+                        <input type="text" value="10" name="lg" id="lgID" size="10" />
+                    </small>
+                    <br />
+                    <br />
+                    <button onclick="alert('bonjour');"><span>Bonjour</span></button>
+                    <br />
+                    <br />
+                    <button class="submit" onclick="segmentation()"><span>Segmentation</span></button>
+                    <button class="submit" onclick="alert('Je ne fais rien, changez-moi !');"><span>action 1</span></button>
+                    <button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 2</span></button>
+                    <button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 3</span></button>
+                    <button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 4</span></button>
+                    <button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 5</span></button>
+                    <button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 6</span></button>
+                </p>
+            </div>
+            <div id="logger" style="width:100%"></div>
+            <br />
+            <div id="Global">
+                <div id="fileDisplayArea"></div>
+                <div id="page-analysis"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
