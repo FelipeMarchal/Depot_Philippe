@@ -7,6 +7,9 @@
     <title>Lecture des données dans un fichier...</title>
     <script type="text/javascript" language="javascript" src="../js/code.js"></script>
     <link rel="stylesheet" href="../css/monstyle.css" />
+    <script type="text/javascript" language="javascript" src="../js/chartist.min.js"></script>
+    <link rel="stylesheet" href="../css/chartist.min.css" />
+	
 </head>
 
 <body>
@@ -43,16 +46,18 @@
                     </small>
                     <br />
                     <br />
-                    <button onclick="alert('bonjour');"><span>Bonjour</span></button>
+                    <button onclick="alert('A vous maintenant de jouer avec cet outil!');"><span>Bonjour</span></button>
                     <br />
                     <br />
                     <button class="submit" onclick="segmentation()"><span>Segmentation</span></button>
-                    <button class="submit" onclick="cooccurrences()"><span>Cooccurrents/fréquence	</span></button>
-                    <button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 2</span></button>
-                    <button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 3</span></button>
-                    <button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 4</span></button>
-                    <button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 5</span></button>
-                    <button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 6</span></button>
+					<button class="submit" onclick="visuSegmentation()"><span>Camembert-Nombre de caractères</span></button>
+                    <button class="submit" onclick="cooccurrences()"><span>Cooccurrents</span></button>
+                    <button class="submit" onclick="visuCooccurrents()"><span>Visualisation cooccurrents</span></button>
+                    <!--<button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 4</span></button>
+                    <button class="submit" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 6</span></button>-->
+					<br />
+					<br />
+					<button class="submit" onclick="aide()" id="boutonAide"><span>Afficher l'aide</span></button>
                 </p>
             </div>
             <div id="logger" style="width:100%"></div>
@@ -61,6 +66,26 @@
                 <div id="fileDisplayArea"></div>
                 <div id="page-analysis"></div>
             </div>
+            <div id="Aide">Grâce à cet outil, vous pouvez obtenir des statistiques passionnantes sur un texte contenu dans un fichier.
+				<br />
+				<br />Pour ce faire, vous devez tout d'abord choisir un fichier au format .txt (bouton <span style="color:blue">Choisir un fichier</span> ci-dessus)
+				<br />et saisir ci-dessus la liste des délimiteurs permettant de définir les mots ("tokens") : <span style="color:blue">DELIMITEUR(S)</span>.
+				<br />NB : il est a priori déconseillé de modifier la liste proposée, sauf besoin particulier.
+				<br />
+				<br />Vous allez alors obtenir :
+				<br />- le nombre de mots et la liste des mots du texte triés par longueur croissante (bouton <span style="color:blue">Segmentation</span> ci-dessus),
+				<br />- un camembert présentant la répartition des mots du texte par longueur (bouton <span style="color:blue">Camembert-Nombre de caractères</span> ci-dessus).
+				<br />
+				<br />Ensuite, vous pouvez visionner les cooccurrents d'un mot donné contenu dans le texte (appelé "pôle") sur une longueur données autour de ce pôle,
+				<br />à condition de remplir ci-dessus les informations <span style="color:blue">PÔLE</span> et <span style="color:blue">LONGUEUR</span> entre 1 et 20.
+				<br />Vous allez pouvoir :
+				<br />- obtenir la liste des mots différents autour du pôle choisi dans l'intervalle correspondant à la longueur,
+				<br />  et pour chaque mot, la co-fréquence totale, à gauche et à droite (bouton <span style="color:blue">Cooccurrents</span> ci-dessus).
+				<br />- visualiser à l'aide d'un histogramme la fréquence (totale, gauche et droite) de ces cooccurrents (bouton <span style="color:blue">Visualisation cooccurrents</span> ci-dessus).
+  				<br />
+				<br /><span style="color:blue">A vous de jouer !</span>
+          </div>
+			<div id="Erreur"</div>
         </div>
     </div>
 </body>
