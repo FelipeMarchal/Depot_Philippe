@@ -51,26 +51,10 @@ function segmentation() {
 
 	if  (document.getElementById("boutonAide").textContent === "Masquer l'aide") {aide()};
 
-	mots = tokenisation(texte, delim);
-	nMots = mots.length;
+	let mots = tokenisation(texte, delim);
 	
-	// on met les mots dans un objet, pour calculer la fréquence des mots
-	freqMots = [];
-    mots.forEach (m => {if (freqMots[m]) {freqMots[m]++;} else {freqMots[m]=1;}});
-
-	// on met les mots dans un objet longueur de mots, pour y mettre la fréaunce et tous les mots ayant cette longueur
-	longMots = [];
-	for (let i=0;i<50;i++){longMots.push([i, 0, '', 0])}; // a priori, il ne devrait pas y avoir des mots de plus de 50 caractères !
+	let longMots = segmentationCalculs(mots);
 	
-	for (m in freqMots) {
-		lg=m.length;
-		if (lg>0) {
-			fr=freqMots[m]
-			longMots[lg][1] += fr;
-			longMots[lg][2] +=  m + ', ';
-			longMots[lg][3] ++;
-		}
-	};
 	// Début du remplissage de page-analysis que l'on commence par vider-----------------------------------------------------
 	pageAnalysis = document.getElementById("page-analysis");
 	pageAnalysis.innerHTML = "";
@@ -121,24 +105,10 @@ function visuSegmentation() {
 		
 	erreur('');
 
-	mots = tokenisation(texte, delim);
-	nMots = mots.length;
+	let mots = tokenisation(texte, delim);
 	
-	if  (document.getElementById("boutonAide").textContent === "Masquer l'aide") {aide()};
-	
-	// on met les mots dans un objet, pour calculer la fréquence des mots
-	freqMots = [];
-    mots.forEach (m => {if (freqMots[m]) {freqMots[m]++;} else {freqMots[m]=1;}});
+	let longMots = segmentationCalculs(mots);
 
-	// on met les mots dans un objet longueur de mots, pour y mettre la fréaunce et tous les mots ayant cette longueur
-	longMots = [];
-	for (let i=0;i<50;i++){longMots.push([i, 0, '', 0])}; // a priori, il ne devrait pas y avoir des mots de plus de 50 caractères !
-	
-	for (m in freqMots) {
-		lg=m.length;
-		if (lg>0) {fr=freqMots[m];longMots[lg][1] += fr;}
-	};
-	
 	// Début du remplissage de page-analysis que l'on commence par vider-----------------------------------------------------
 	pageAnalysis = document.getElementById("page-analysis");
 	pageAnalysis.innerHTML = "";
@@ -184,36 +154,16 @@ function cooccurrences() {
 	const lgID = document.getElementById(`lgID`).value;
 	if (lgID === '0') {erreur('Veuillez SVP indiquer une longueur positive !');return}
 	
-	mots = tokenisation(texte, delim);
+	let mots = tokenisation(texte, delim);
 	if (!mots.includes(poleID)) {erreur('Attention ! Votre pôle ne figure pas dans le texte !');return}	
 		
 	erreur('');
 	
 	if  (document.getElementById("boutonAide").textContent === "Masquer l'aide") {aide()};
+	
+	let coocc0 = cooccurrencesCalculs(mots, poleID, lgID);
+	let nFois = coocc0[0]; let coocc = coocc0[1];
 		
-	let nMots = mots.length;
-	
-	// structure de coocc0 : clé(mot), [fréquence à gauche, fréquence à droite]
-	let coocc0 = [];
-	let nFois = 0;
-	for (let i=0; i<nMots; i++){
-		if (mots[i]===poleID){
-			nFois++;
-			for (let j=1;j<=lgID;j++) {
-				if (i-j>0) {
-					m=mots[i-j]
-					if (coocc0[m]){coocc0[m][0]++} else {coocc0[m]=[1,0]}}
-				if (i+j<nMots) {
-					m=mots[i+j]
-					if (coocc0[m]){coocc0[m][1]++} else {coocc0[m]=[0,1]}}
-	}}};
-
-	//pour trier selon la cofréquence décroissante, on transforme l'objet coocc en objet de tableaux
-	// structure de coocc : mot, [cofréquence, fréquence à gauche, fréquence à droite] trié par cofréquence décroissante
-	let coocc=[];
-	for (m in coocc0) {coocc.push([m, coocc0[m][0]+coocc0[m][1], coocc0[m][0], coocc0[m][1]]);}
-	coocc.sort((a, b) => b[1] - a[1]);
-	
 	// Début du remplissage de page-analysis que l'on commence par vider----------------------------------------------------
 	pageAnalysis = document.getElementById("page-analysis");
 	pageAnalysis.innerHTML = "";
@@ -268,37 +218,16 @@ function visuCooccurrents() {
 	const lgID = document.getElementById(`lgID`).value;
 	if (lgID === '0') {erreur('Veuillez SVP indiquer une longueur positive !');return}
 	
-	mots = tokenisation(texte, delim);
+	let mots = tokenisation(texte, delim);
 	if (!mots.includes(poleID)) {erreur('Attention ! Votre pôle ne figure pas dans le texte !');return}
 		
 	erreur('');
 	
 	if  (document.getElementById("boutonAide").textContent === "Masquer l'aide") {aide()};
 		
-	let nMots = mots.length;
-	
-	// structure de coocc0 : clé(mot), [fréquence à gauche, fréquence à droite]
-	let coocc0 = []; 
-	let nFois = 0;
-	
-	for (let i=0; i<nMots;i++){
-		if (mots[i]===poleID){
-			nFois++;
-			for (let j=1;j<=lgID;j++) {
-				if (i-j>0) {
-					m=mots[i-j]
-					if (coocc0[m]){coocc0[m][0]++} else {coocc0[m]=[1,0]}}
-				if (i+j<nMots) {
-					m=mots[i+j]
-					if (coocc0[m]){coocc0[m][1]++} else {coocc0[m]=[0,1]}}
-	}}};
+	let coocc0 = cooccurrencesCalculs(mots, poleID, lgID);
+	let nFois = coocc0[0]; let coocc = coocc0[1];
 
-	//pour trier selon la cofréquence décroissante, on transforme l'objet coocc en objet de tableaux
-	// structure de coocc : mot, [cofréquence, fréquence à gauche, fréquence à droite]
-	let coocc=[]
-	for (m in coocc0) {coocc.push([m, coocc0[m][0]+coocc0[m][1], coocc0[m][0], coocc0[m][1]]);}
-	coocc.sort((a, b) => b[1] - a[1]);
-	
 	if (coocc.length>10) {maxMots = 10;} else {maxMots = coocc.length;};
 
 	// Début du remplissage de page-analysis que l'on commence par vider----------------------------------------------------
@@ -341,6 +270,58 @@ function visuCooccurrents() {
 
     new Chartist.Bar("#page-analysis", data, options);
 
+}
+function segmentationCalculs(mots) {
+	
+	nMots = mots.length;
+	
+	// on met les mots dans un objet, pour calculer la fréquence des mots
+	freqMots = [];
+    mots.forEach (m => {if (freqMots[m]) {freqMots[m]++;} else {freqMots[m]=1;}});
+
+	// on met les mots dans un objet longueur de mots, pour y mettre la fréaunce et tous les mots ayant cette longueur
+	longMots = [];
+	for (let i=0;i<50;i++){longMots.push([i, 0, '', 0])}; // a priori, il ne devrait pas y avoir des mots de plus de 50 caractères !
+	
+	for (m in freqMots) {
+		lg=m.length;
+		if (lg>0) {
+			fr=freqMots[m]
+			longMots[lg][1] += fr;
+			longMots[lg][2] +=  m + ', ';
+			longMots[lg][3] ++;
+		}
+	};
+
+	return longMots
+
+}
+function cooccurrencesCalculs(mots, pole, lg) {
+	
+	let nMots = mots.length;
+	
+	// structure de coocc0 : clé(mot), [fréquence à gauche, fréquence à droite]
+	let coocc0 = [];
+	let nFois = 0;
+	for (let i=0; i<nMots; i++){
+		if (mots[i]===pole){
+			nFois++;
+			for (let j=1;j<=lg;j++) {
+				if (i-j>0) {
+					m=mots[i-j]
+					if (coocc0[m]){coocc0[m][0]++} else {coocc0[m]=[1,0]}}
+				if (i+j<nMots) {
+					m=mots[i+j]
+					if (coocc0[m]){coocc0[m][1]++} else {coocc0[m]=[0,1]}}
+	}}};
+	
+	//pour trier selon la cofréquence décroissante, on transforme l'objet coocc en objet de tableaux
+	// structure de coocc : mot, [cofréquence, fréquence à gauche, fréquence à droite] trié par cofréquence décroissante
+	let coocc=[];
+	for (m in coocc0) {coocc.push([m, coocc0[m][0]+coocc0[m][1], coocc0[m][0], coocc0[m][1]]);}
+	coocc.sort((a, b) => b[1] - a[1]);
+	
+	return [nFois, coocc]
 }
 function tokenisation(texte, delim, mode = 1, casse = false) {
 	
